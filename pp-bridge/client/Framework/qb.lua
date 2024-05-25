@@ -33,12 +33,10 @@ local function loadPlayerData()
 end
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    print('loaded')
     loadPlayerData()
 end)
-print(type(QBCore.Functions.GetPlayerData().charinfo), 'type')
+
 if QBCore.Functions.GetPlayerData().charinfo ~= nil then
-    print('loaded')
     loadPlayerData()
 end
 
