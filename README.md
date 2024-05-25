@@ -50,7 +50,7 @@ PP-Bridge is a FiveM script designed to integrate various frameworks, inventorie
 
 
 ## Documentation 📚
-https://docs.pixelprecision.dev/bridge
+(soon)
 
 ## Website 🌍
 https://pixelprecision.dev
