@@ -1,4 +1,5 @@
 local qbox = exports.qbx_core
+QBCore = exports['qb-core']:GetCoreObject()
 
 local function validatePlayer(player)
     if not player or not player.PlayerData or not player.PlayerData.source then
