@@ -2,40 +2,44 @@ local data = {}
 
 ESX = exports['es_extended']:getSharedObject()
 
-local function loadPlayerData()
-    data.getName = function()
+data.getName = function()
+    if not ESX.PlayerData then 
         return {
-            fullName = ESX.PlayerData.firstName .. ' ' .. ESX.PlayerData.lastName,
-            firstName = ESX.PlayerData.firstName,
-            lastName = ESX.PlayerData.lastName
-        }
+            fullName = '',
+            firstName = '',
+            lastName = ''
+        } 
     end
-
-    data.getJob = function()
-        return {
-            name = ESX.PlayerData.job.name,
-            label = ESX.PlayerData.job.label,
-            grade = ESX.PlayerData.job.grade,
-            grade_label = ESX.PlayerData.job.grade_label
-        }
-    end
-
-    data.TriggerServerCallback = function(name, cb, ...)
-        ESX.TriggerServerCallback(name, cb, ...)
-    end
-
-    data.getSex = function()
-        return ESX.PlayerData.sex == "m" and "male" or "female"
-    end
+    return {
+        fullName = ESX.PlayerData.firstName .. ' ' .. ESX.PlayerData.lastName,
+        firstName = ESX.PlayerData.firstName,
+        lastName = ESX.PlayerData.lastName
+    }
 end
 
-AddEventHandler('esx:playerLoaded', function(playerData)
-    ESX.PlayerData = playerData
-    loadPlayerData()
-end)
+data.getJob = function()
+    if not ESX.PlayerData then 
+        return {
+            name = '',
+            label = '',
+            grade = 0,
+            grade_label = ''
+        }
+    end
+    return {
+        name = ESX.PlayerData.job.name,
+        label = ESX.PlayerData.job.label,
+        grade = ESX.PlayerData.job.grade,
+        grade_label = ESX.PlayerData.job.grade_label
+    }
+end
 
-if ESX.IsPlayerLoaded() then
-    loadPlayerData()
+data.TriggerServerCallback = function(name, cb, ...)
+    ESX.TriggerServerCallback(name, cb, ...)
+end
+
+data.getSex = function()
+    return ESX.PlayerData and (ESX.PlayerData.sex == "m" and "male" or "female") or "male"
 end
 
 return data
