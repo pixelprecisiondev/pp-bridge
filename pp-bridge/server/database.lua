@@ -88,7 +88,7 @@ local function checkTable(tables)
 
     local function changeCollation(tableName, columnName, collation)
         getColumnCollation(tableName, columnName, function(currentCollation)
-            if currentCollation then
+            if currentCollation and currentCollation ~= collation then
                 local changeQuery = "ALTER TABLE `" .. tableName .. "` MODIFY `" .. columnName .. "` " .. collation
                 MySQL.Async.execute(changeQuery, {}, function(rowsChanged)
                     if rowsChanged then
@@ -101,7 +101,7 @@ local function checkTable(tables)
         end)
     end
 
-    local function tableCollation(tableName, callback)
+    local function getTableCollation(tableName, callback)
         MySQL.Async.fetchScalar("SELECT TABLE_COLLATION FROM information_schema.tables WHERE TABLE_NAME = ?", {tableName}, function(result)
             callback(result)
         end)
@@ -109,6 +109,9 @@ local function checkTable(tables)
 
     local function databaseCollation(callback)
         MySQL.Async.fetchScalar("SELECT @@collation_database", {}, function(result)
+            if result == 'utf8mb3_general_ci' then
+                result = 'utf8mb4_general_ci'
+            end
             callback(result)
         end)
     end
@@ -137,9 +140,10 @@ local function checkTable(tables)
                 if not exists then
                     createTable(tableName, columns)
                 else
-                    tableCollation(tableName, function(tableCol)
-                        if tableCol and tableCol ~= dbCollation then
-                            MySQL.Async.execute("ALTER TABLE `" .. tableName .. "` CONVERT TO CHARACTER SET utf8mb4 COLLATE " .. dbCollation, {}, function(rowsChanged)
+                    getTableCollation(tableName, function(tableCol)
+                        if tableCol and tableCol ~= dbCollation and tableCol ~= "utf8mb4_unicode_ci" then
+                            local convertQuery = "ALTER TABLE `" .. tableName .. "` CONVERT TO CHARACTER SET utf8mb4 COLLATE " .. dbCollation
+                            MySQL.Async.execute(convertQuery, {}, function(rowsChanged)
                                 if rowsChanged then
                                     bridgePrint("Changed collation of table " .. tableName .. " to " .. dbCollation .. ".", 'success')
                                 else
@@ -162,7 +166,8 @@ local function checkTable(tables)
                                 else
                                     getColumnCollation(tableName, column.name, function(colCollation)
                                         if colCollation and colCollation ~= dbCollation and column.type:upper() ~= "TIMESTAMP" then
-                                            changeCollation(tableName, column.name, column.type .. " COLLATE " .. dbCollation)
+                                            local changeColQuery = column.type .. " COLLATE " .. dbCollation
+                                            changeCollation(tableName, column.name, changeColQuery)
                                         end
                                     end)
                                 end
