@@ -34,6 +34,14 @@ PP-Bridge is a FiveM script designed to integrate various frameworks, inventorie
    ensure pp-bridge
    ensure pixelprecision_scripts
    ```
+5. Configure scripts that you are using using convars:
+   ```lua
+   setr pp-bridge:Framework "auto" -- "auto" | "esx" (es_extended) | "qb" (qb-core) | "qbox" (qbx_core)
+   setr pp-bridge:Inventory "auto" -- "auto" | "esx" (native es_extended) | "qb" (native qb-core) | ox_inv (ox_inventory) | qb_inv (qb-inventory)
+   setr pp-bridge:Database "auto" -- "auto" | "esx" (es_extended) | "qb" (qb-core) | "qbox" (qbx_core)
+   setr pp-bridge:Target "auto" -- "auto" | "ox" (ox_target) | "qb" (qb-target)
+   ```
+6. Your bridge is ready to work! 🎉
 
 ## Compatibility 🌐
 - **Frameworks:**
@@ -41,16 +49,17 @@ PP-Bridge is a FiveM script designed to integrate various frameworks, inventorie
   - [qb-core](https://github.com/qbcore-framework/qb-core)
   - [qbox_core](https://github.com/Qbox-project)
 - **Inventory:**
-  - [ox_inventory]([#](https://github.com/overextended/ox_inventory))
-  - [qb-inventory]([#](https://github.com/overextended/ox_inventory))
-
+  - [ox_inventory]((https://github.com/overextended/ox_inventory))
+  - [qb-inventory]((https://github.com/overextended/ox_inventory))
+  - [es_extended (ESX)](https://github.com/esx-framework/esx_core) **NOT RECOMMENDED**
+  - [qb-core](https://github.com/qbcore-framework/qb-core) **NOT RECOMMENDED**
 - **Target:**
   - [ox_target](https://github.com/overextended/ox_target)
   - [qb-target](https://github.com/qbcore-framework/qb-target)
 
 
 ## Documentation 📚
-(soon)
+https://docs.pixelprecision.dev/bridge
 
 ## Website 🌍
 https://pixelprecision.dev
