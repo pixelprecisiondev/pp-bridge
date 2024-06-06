@@ -3,7 +3,8 @@ local data = {}
 ESX = exports['es_extended']:getSharedObject()
 
 data.getName = function()
-    if not ESX.PlayerData then 
+    local playerdata = ESX.GetPlayerData()
+    if not playerdata?.firstName then 
         return {
             fullName = '',
             firstName = '',
@@ -11,14 +12,15 @@ data.getName = function()
         } 
     end
     return {
-        fullName = ESX.PlayerData.firstName .. ' ' .. ESX.PlayerData.lastName,
-        firstName = ESX.PlayerData.firstName,
-        lastName = ESX.PlayerData.lastName
+        fullName = playerdata.firstName .. ' ' .. playerdata.lastName,
+        firstName = playerdata.firstName,
+        lastName = playerdata.lastName
     }
 end
 
 data.getJob = function()
-    if not ESX.PlayerData then 
+    local playerdata = ESX.GetPlayerData()
+    if not playerdata?.job then 
         return {
             name = '',
             label = '',
@@ -27,10 +29,10 @@ data.getJob = function()
         }
     end
     return {
-        name = ESX.PlayerData.job.name,
-        label = ESX.PlayerData.job.label,
-        grade = ESX.PlayerData.job.grade,
-        grade_label = ESX.PlayerData.job.grade_label
+        name = playerdata.job.name,
+        label = playerdata.job.label,
+        grade = playerdata.job.grade,
+        grade_label = playerdata.job.grade_label
     }
 end
 
@@ -39,7 +41,8 @@ data.TriggerServerCallback = function(name, cb, ...)
 end
 
 data.getSex = function()
-    return ESX.PlayerData and (ESX.PlayerData.sex == "m" and "male" or "female") or "male"
+    local playerdata = ESX.GetPlayerData()
+    return playerdata?.sex and (playerdata.sex == "m" and "male" or "female") or "male"
 end
 
 return data

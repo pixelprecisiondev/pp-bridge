@@ -4,7 +4,7 @@ game 'gta5'
 
 name 'pp-bridge'
 author 'PixelPrecision'
-version '1.0.1'
+version '1.1.0'
 
 dependencies {
     '/server:7290',
@@ -23,8 +23,7 @@ files {
 
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
-    --'server/events.lua',
     'server/database.lua'
 }
---client_script 'client/events.lua'
+
 shared_script 'init.lua'

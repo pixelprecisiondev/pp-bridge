@@ -17,12 +17,16 @@ local Config = {
     },
     Inventory = {
         client = {
-            ['ox_inventory'] = 'ox.lua',
-            ['qb-inventory'] = 'qb.lua'
+            ['ox_inventory'] = 'ox_inv.lua',
+            ['qb-inventory'] = 'qb_inv.lua',
+            ['qb-core'] = 'qb.lua',
+            ['es_extended'] = 'esx.lua'
         },
         server = {
-            ['ox_inventory'] = 'ox.lua',
-            ['qb-inventory'] = 'qb.lua'
+            ['ox_inventory'] = 'ox_inv.lua',
+            ['qb-inventory'] = 'qb_inv.lua',
+            ['qb-core'] = 'qb.lua',
+            ['es_extended'] = 'esx.lua'
         },
     },
     Target = {
@@ -108,35 +112,54 @@ end
 local server = IsDuplicityVersion()
 
 local function setup()
+    local settings = {
+        Framework = GetConvar('pp-bridge:Framework', 'auto'),
+        Inventory = GetConvar('pp-bridge:Inventory', 'auto'),
+        Target = GetConvar('pp-bridge:Target', 'auto'),
+        Database = GetConvar('pp-bridge:Database', 'auto')
+    }
+
+    for name, setting in pairs(settings) do
+        if setting == 'auto' then
+            settings[name] = nil
+            bridgePrint(('Auto-detecting %s modules'):format(name), 'info', true)
+        elseif setting then
+            bridgePrint(('%s module forced to %s'):format(name, setting), 'info', true)
+        end
+    end
+
     local missingCategories = {}
+    local loadedModules = {client = {}, server = {}}
 
     for name, module in pairs(Config) do
-        local found = false
+        local setting = settings[name]
+
         if server and module.server then
             for framework, path in pairs(module.server) do
-                if (name == 'Framework' or name == 'Database') and GetResourceState('qbx_core') ~= "missing" and framework == 'qb-core' then
-                    bridgePrint(('Skipping %s %s server module because qbx_core is available'):format(framework, name), 'info', true)
+                if loadedModules.server[name] then break end
+                if setting and framework ~= setting then
                     goto continue
                 end
-                if GetResourceState(framework) ~= "missing" then
+                if GetResourceState(framework) ~= "missing" or (setting and framework == setting) then
                     local data = loadBridgeModule('server/' .. name .. '/' .. path)
                     if data then
                         for funcName, func in pairs(data) do
                             Bridge[funcName] = func
                         end
                         bridgePrint(('%s %s server module loaded'):format(framework, name), 'success', true)
-                        found = true
+                        loadedModules.server[name] = true
                     else
                         bridgePrint(('Failed to load %s %s server module'):format(framework, name), 'error', true)
                     end
                 end
                 ::continue::
             end
-            if not found and name ~= 'Target' then
+            if not loadedModules.server[name] and name ~= 'Target' then
                 table.insert(missingCategories, name)
             end
         elseif not server and module.client then
             for framework, path in pairs(module.client) do
+                if loadedModules.client[name] then break end
                 Citizen.CreateThread(function()
                     if name == 'Target' and GetResourceState('ox_target') ~= "missing" and framework ~= 'ox_target' then
                         bridgePrint(('Skipping %s %s client module because ox_target is available'):format(framework, name), 'info', true)
@@ -145,17 +168,20 @@ local function setup()
                         bridgePrint(('Skipping %s %s client module because qbx_core is available'):format(framework, name), 'info', true)
                         return
                     end
+                    if setting and framework ~= setting then
+                        return
+                    end
                     while GetResourceState(framework) == "starting" do
                         Citizen.Wait(100)
                     end
-                    if GetResourceState(framework) ~= "missing" then
+                    if GetResourceState(framework) ~= "missing" or (setting and framework == setting) then
                         local data = loadBridgeModule('client/' .. name .. '/' .. path)
                         if data then
                             for funcName, func in pairs(data) do
                                 Bridge[funcName] = func
                             end
                             bridgePrint(('%s %s client module loaded'):format(framework, name), 'success', true)
-                            found = true
+                            loadedModules.client[name] = true
                         else
                             bridgePrint(('Failed to load %s %s client module'):format(framework, name), 'error', true)
                         end

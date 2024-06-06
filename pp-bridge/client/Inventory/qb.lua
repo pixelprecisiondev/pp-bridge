@@ -1,10 +1,11 @@
 local data = {}
 
-local inventory = exports['qb-inventory']
+QBCore = exports['qb-core']:GetCoreObject()
 
 data.openInventory = function(inventoryType, inventoryData)
     if not checkArgs(inventoryType, inventoryData) then return end
-    inventory:OpenInventory(inventoryType, inventoryData)
+    --[[ NOT AVAILABLE ]]
+    return false
 end
 
 data.getCurrentWeapon = function()
@@ -24,7 +25,13 @@ end
 
 data.getItemCount = function(itemName, metadata)
     if not checkArgs(itemName) then return end
-    return inventory:GetItemCount(itemName)
+    local count = 0
+    for _, item in pairs(QBCore.Functions.GetPlayerData().items) do
+        if item.name == itemName then
+            count = count + item.amount
+        end
+    end
+    return count
 end
 
 return data
