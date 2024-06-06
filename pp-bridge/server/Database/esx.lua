@@ -135,7 +135,7 @@ data.getVehicleData = function(args, additionalColumns, callback)
                     end)
                 end
             else
-                callback(nil)
+                callback({})
             end
         end)
     end)
