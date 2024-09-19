@@ -43,7 +43,7 @@ end
 data.getName = function(frPlayer)
     if not checkArgs(frPlayer) or not validatePlayer(frPlayer) then return end
     local response = {
-        fullName = frPlayer.PlayerData.name,
+        fullName = frPlayer.PlayerData.charinfo.firstname .. ' ' .. frPlayer.PlayerData.charinfo.lastname,
         firstName = frPlayer.PlayerData.charinfo.firstname,
         lastName = frPlayer.PlayerData.charinfo.lastname
     }
