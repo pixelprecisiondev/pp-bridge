@@ -4,7 +4,7 @@ game 'gta5'
 
 name 'pp-bridge'
 author 'PixelPrecision'
-version '1.1.2'
+version '1.1.3'
 
 dependencies {
     '/server:7290',
