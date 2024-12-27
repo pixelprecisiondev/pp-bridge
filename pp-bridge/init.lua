@@ -73,12 +73,11 @@ end
 function checkArgs(...)
     local args = {...}
     local funcInfo = debug.getinfo(2, "nSl")
-    local funcName = funcInfo.name or "unknown function"
-    local argNames = debug.getlocal(2, 1)
+    local funcName = funcInfo and funcInfo.name or "unknown function"
 
     for i = 1, select("#", ...) do
         local arg = select(i, ...)
-        local argName = debug.getlocal(2, i)
+        local argName = debug.getlocal and debug.getlocal(2, i) or ("arg#%d"):format(i)
         if arg == nil then
             print(("^1[ERROR] ^0Missing required argument '%s' in %s"):format(argName or "unknown argument", funcName))
             return false
