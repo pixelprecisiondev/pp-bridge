@@ -46,4 +46,29 @@ data.getSex = function()
     return charinfo and (charinfo.gender == 1 and "male" or "female") or "male"
 end
 
+data.getJobs = function()
+    local jobs = qbx:GetJobs()
+    local response = {}
+
+    for jobname, jobdata in pairs(jobs) do
+        local jobInfo = {
+            name = jobname,
+            label = jobdata.label,
+            grades = {}
+        }
+
+        for grade, gradeData in pairs(jobdata.grades) do
+            jobInfo.grades[tonumber(grade)] = {
+                grade = tonumber(grade),
+                name = gradeData.name,
+                label = gradeData.label
+            }
+        end
+
+        table.insert(response, jobInfo)
+    end
+
+    return response
+end
+
 return data
